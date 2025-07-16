@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <title>LiveWind Widget</title>
+  <style>
+    body {
+      margin: 0; font-family: sans-serif;
+      background: #f0f8ff;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+    .windline {
+      display: flex; gap: 1em; align-items: center;
+      background: #fff; padding: 1em 2em;
+      border-radius: 10px; box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    }
+    .arrow {
+      display: inline-block;
+      transform: rotate(0deg);
+      transition: transform 0.3s;
+    }
+    .circle {
+      width: 20px; height: 20px;
+      border-radius: 50%;
+      background: conic-gradient(#666 var(--fill), #ddd 0deg);
+      border: 1px solid #aaa;
+    }
+  </style>
+</head>
+<body>
+  <div class="windline" id="widget">Lade Winddaten...</div>
+
+  <script>
+    const station = new URLSearchParams(window.location.search).get("station") || "11643";
+    fetch(`/.netlify/functions/winddata?station=${station}`)
+      .then(res => res.json())
+      .then(data => {
+        const widget = document.getElementById("widget");
+        if (data.fallback) {
+          widget.textContent = data.message;
+          return;
+        }
+
+        const deg = data.wdir ?? 0;
+        const speed = data.wspd_knots ?? "?";
+        const time = data.time ?? "?";
+        const rhum = data.rhum ?? "?";
+        const wpgt = data.wpgt ? (data.wpgt * 1.94384).toFixed(1) : "?";
+        const coco = Math.min(data.coco ?? 0, 3);
+        const fillDeg = `${(coco / 3) * 360}deg`;
+
+        widget.innerHTML = `
+          <span class="arrow" style="transform: rotate(${deg}deg)">🡡</span>
+          ${deg}° – ${speed} kn<br>
+          Böen: ${wpgt} kn, Feuchte: ${rhum} %, ${time}
+          <div class="circle" style="--fill: ${fillDeg}"></div>
+        `;
+      })
+      .catch(err => {
+        document.getElementById("widget").textContent = "Fehler beim Abrufen.";
+        console.error(err);
+      });
+  </script>
+</body>
+</html>
