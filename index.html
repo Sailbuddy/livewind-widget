@@ -53,7 +53,7 @@
         const fillDeg = `${(coco / 3) * 360}deg`;
 
         widget.innerHTML = `
-          <span class="arrow" style="transform: rotate(${deg}deg)">🡡</span>
+          <span class="arrow" style="transform: rotate(${(deg + 180) % 360}deg)">🡡</span>
           ${deg}° – ${speed} kn<br>
           Böen: ${wpgt} kn, Feuchte: ${rhum} %, ${time}
           <div class="circle" style="--fill: ${fillDeg}"></div>
