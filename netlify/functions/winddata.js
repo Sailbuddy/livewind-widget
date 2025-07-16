@@ -1,6 +1,6 @@
 // netlify/functions/winddata.js
 const axios = require("axios");
-require("dotenv").config();
+
 
 exports.handler = async function (event, context) {
   const apiKey = process.env.METEOSTAT_API_KEY;
