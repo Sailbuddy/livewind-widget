@@ -1,12 +1,15 @@
 // netlify/functions/winddata.js
 const axios = require("axios");
 
-
 exports.handler = async function (event, context) {
   const apiKey = process.env.METEOSTAT_API_KEY;
   const station = event.queryStringParameters.station || "11643";
-  const start = "2025-07-08";
-  const end = "2025-07-10";
+
+  // Dynamischer Zeitbereich: letzte 36 Stunden bis jetzt
+  const now = new Date();
+  const end = now.toISOString().slice(0, 10); // z. B. "2025-07-16"
+  const startDate = new Date(now.getTime() - 36 * 60 * 60 * 1000);
+  const start = startDate.toISOString().slice(0, 10);
 
   try {
     const response = await axios.get("https://meteostat.p.rapidapi.com/stations/hourly", {
@@ -30,7 +33,6 @@ exports.handler = async function (event, context) {
       };
     }
 
-    const now = new Date();
     const pastEntries = data.filter(entry => new Date(entry.time) <= now);
     const lastValid = pastEntries[pastEntries.length - 1];
 
