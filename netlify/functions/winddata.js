@@ -7,7 +7,7 @@ exports.handler = async function (event, context) {
 
   // Dynamischer Zeitbereich: letzte 36 Stunden bis jetzt
   const now = new Date();
-  const end = now.toISOString().slice(0, 10); // z. B. "2025-07-16"
+  const end = now.toISOString().slice(0, 10);
   const startDate = new Date(now.getTime() - 36 * 60 * 60 * 1000);
   const start = startDate.toISOString().slice(0, 10);
 
@@ -43,7 +43,9 @@ exports.handler = async function (event, context) {
       };
     }
 
-    const wspd_knots = lastValid.wspd ? (lastValid.wspd * 1.94384).toFixed(1) : null;
+    // Korrekte Umrechnung: km/h → kn (1 kn = 1.852 km/h)
+    const wspd_knots = lastValid.wspd ? (lastValid.wspd / 1.852).toFixed(1) : null;
+    const wpgt_knots = lastValid.wpgt ? (lastValid.wpgt / 1.852).toFixed(1) : null;
     const timeLocal = new Date(lastValid.time).toLocaleTimeString("de-AT", { hour: "2-digit", minute: "2-digit" });
 
     return {
@@ -51,9 +53,9 @@ exports.handler = async function (event, context) {
       body: JSON.stringify({
         time: timeLocal,
         wspd_knots,
+        wpgt_knots,
         wdir: lastValid.wdir,
         rhum: lastValid.rhum,
-        wpgt: lastValid.wpgt,
         coco: lastValid.coco
       })
     };
