@@ -3,7 +3,7 @@ const axios = require("axios");
 
 exports.handler = async function (event, context) {
   const apiKey = process.env.METEOSTAT_API_KEY;
-  const station = event.queryStringParameters.station || "11643";
+  const station = event.queryStringParameters.station || "16108";
 
   // Dynamischer Zeitbereich: letzte 36 Stunden bis jetzt
   const now = new Date();

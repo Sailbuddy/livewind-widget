@@ -34,7 +34,7 @@
   <div class="windline" id="widget">Lade Winddaten...</div>
 
   <script>
-    const station = new URLSearchParams(window.location.search).get("station") || "11643";
+    const station = new URLSearchParams(window.location.search).get("station") || "16108";
     fetch(`/.netlify/functions/winddata?station=${station}`)
       .then(res => res.json())
       .then(data => {
